@@ -18,6 +18,13 @@ struct AvailableIndexRange {
 	int front_index = 0;
 };
 
+struct TerminalUtils {
+public:
+	std::string center_text(std::string text) {
+		
+	}
+};
+
 struct InventoryManagement {
 public:
 	void remove_last_product() {
