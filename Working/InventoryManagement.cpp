@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <queue>
 
 const int INVENTORY_MAX_SIZE = 5;
@@ -20,8 +21,46 @@ struct AvailableIndexRange {
 
 struct TerminalUtils {
 public:
-	std::string center_text(std::string text) {
+	std::string center_text(std::string text, int text_max_length) {
+		std::string output = "";
+
+		if (text.length() > text_max_length) {
+			for (int i = 0; i < text_max_length; i++) 
+				output += text[i];
+			return output;
+		}
+		else if (text.length() == text_max_length) {
+			return text;
+		}
 		
+		int left_empty_spaces = (text_max_length - text.length()) / 2;
+		int right_empty_spaces = text_max_length - left_empty_spaces - text.length();
+
+		return 
+			return_empty_spaces(left_empty_spaces) + 
+			text + 
+			return_empty_spaces(right_empty_spaces);
+	}
+
+	std::string add_spaces(std::string text, int length) {
+		return text + return_empty_spaces(length - text.length());
+	}
+
+	std::string multiple_char(char character, int lenght) {
+		std::string output;
+		for (int i  = 0; i < lenght; i++) {
+			output += character;
+		}
+		return output + "\n";
+	}
+
+private:
+	std::string return_empty_spaces(int quantity) {
+		std::string output = "";
+		for (int i  = 0; i < quantity; i++) {
+			output += " ";
+		}
+		return output;
 	}
 };
 
@@ -66,15 +105,44 @@ public:
 	}
 
 	void display_products () {
+		int collumn_sizes[3] = {20, 20, 20};
+		std::cout 
+		<< "|" 
+		<< terminal_utils.center_text("Product Name", collumn_sizes[0]) 
+		<< "|"
+		<< terminal_utils.center_text("Price", collumn_sizes[1]) 
+		<< "|"
+		<< terminal_utils.center_text("Quantity", collumn_sizes[2]) 
+		<< "|\n";
+
+		int char_length = collumn_sizes[0] + collumn_sizes[1] + collumn_sizes[2] + 4;
+		std::cout << terminal_utils.multiple_char('-', char_length);
+
 		for (int i = 0; i < INVENTORY_MAX_SIZE; i++) {
 			if (!inventory_arr[i].is_empty()) {
 				std::cout 
-				<< inventory_arr[i].name << " "
-				<< inventory_arr[i].price << " "
-				<< inventory_arr[i].quantity << "\n\n";
+				<< "|" 
+				<< terminal_utils.center_text(
+					inventory_arr[i].name, 
+					collumn_sizes[0]
+				) 
+				<< "|"
+				<< terminal_utils.center_text(
+					std::to_string(inventory_arr[i].price), 
+					collumn_sizes[1]
+				) 
+				<< "|"
+				<< terminal_utils.center_text(
+					std::to_string(inventory_arr[i].quantity), 
+					collumn_sizes[2]
+				) 
+				<< "|\n";
 			}
 			else {
-				std::cout << "Empty\n\n";
+				std::cout 
+				<< "|" << terminal_utils.center_text("empty", collumn_sizes[0]) << "|"
+				<< terminal_utils.center_text("empty", collumn_sizes[1]) << "|"
+				<< terminal_utils.center_text("empty", collumn_sizes[2]) << "|\n";
 			}
 		}
 	}
@@ -94,6 +162,7 @@ private:
 	const Product empty_prod = Product{};
 
 	AvailableIndexRange avail_index_range;
+	TerminalUtils terminal_utils;
 
 	Product inventory_arr[INVENTORY_MAX_SIZE];
 	std::queue<int> queue;
@@ -107,8 +176,4 @@ private:
 
 int main() {
 	InventoryManagement inventory_management;
-	Product sample_product = Product{"sample", 1, 1};
-
-	inventory_management.display_products();
-
 }
