@@ -65,6 +65,16 @@ private:
 };
 
 struct InventoryManagement {
+private:
+	const Product empty_prod = Product{};
+	const int collumn_sizes[3] = {20, 20, 20};
+
+	AvailableIndexRange avail_index_range;
+	TerminalUtils terminal_utils;
+
+	Product inventory_arr[INVENTORY_MAX_SIZE];
+	std::queue<int> queue;
+
 public:
 	void remove_last_product() {
 		if (queue.empty()) {
@@ -83,11 +93,13 @@ public:
 
 	void add_product(Product product) {
 		int index;
+
 		if (queue.size() == INVENTORY_MAX_SIZE) {
 			std::cout << "Invalid: Inventory is full\n";
 			return;
 		}
 
+		// Picking what index to store the product
 		if (queue.empty()) {
 			index = 0;
 		}
@@ -98,6 +110,7 @@ public:
 		else {
 			index = queue.back() + 1;
 		}
+
 		inventory_arr[index] = product;
 		queue.push(index);
 
@@ -105,44 +118,12 @@ public:
 	}
 
 	void display_products () {
-		int collumn_sizes[3] = {20, 20, 20};
-		std::cout 
-		<< "|" 
-		<< terminal_utils.center_text("Product Name", collumn_sizes[0]) 
-		<< "|"
-		<< terminal_utils.center_text("Price", collumn_sizes[1]) 
-		<< "|"
-		<< terminal_utils.center_text("Quantity", collumn_sizes[2]) 
-		<< "|\n";
-
-		int char_length = collumn_sizes[0] + collumn_sizes[1] + collumn_sizes[2] + 4;
-		std::cout << terminal_utils.multiple_char('-', char_length);
-
 		for (int i = 0; i < INVENTORY_MAX_SIZE; i++) {
 			if (!inventory_arr[i].is_empty()) {
-				std::cout 
-				<< "|" 
-				<< terminal_utils.center_text(
-					inventory_arr[i].name, 
-					collumn_sizes[0]
-				) 
-				<< "|"
-				<< terminal_utils.center_text(
-					std::to_string(inventory_arr[i].price), 
-					collumn_sizes[1]
-				) 
-				<< "|"
-				<< terminal_utils.center_text(
-					std::to_string(inventory_arr[i].quantity), 
-					collumn_sizes[2]
-				) 
-				<< "|\n";
+				print_item(inventory_arr[i]);
 			}
 			else {
-				std::cout 
-				<< "|" << terminal_utils.center_text("empty", collumn_sizes[0]) << "|"
-				<< terminal_utils.center_text("empty", collumn_sizes[1]) << "|"
-				<< terminal_utils.center_text("empty", collumn_sizes[2]) << "|\n";
+				print_empty();
 			}
 		}
 	}
@@ -159,21 +140,42 @@ public:
 	}
 
 private:
-	const Product empty_prod = Product{};
-
-	AvailableIndexRange avail_index_range;
-	TerminalUtils terminal_utils;
-
-	Product inventory_arr[INVENTORY_MAX_SIZE];
-	std::queue<int> queue;
-
 	bool back_have_available_index() {
 		if (avail_index_range.back_index != avail_index_range.front_index) 
 			return true;
 		return false;
 	}
+
+	void print_display_header() {
+		std::cout << "|" 
+			<< terminal_utils.center_text("Product Name", collumn_sizes[0]) << "|"
+			<< terminal_utils.center_text("Price", collumn_sizes[1]) << "|"
+			<< terminal_utils.center_text("Quantity", collumn_sizes[2]) << "|\n"
+		;
+		int char_length = collumn_sizes[0] + collumn_sizes[1] + collumn_sizes[2] + 4;
+		std::cout << terminal_utils.multiple_char('-', char_length);
+	}
+
+	void print_item(Product product) {
+		std::string output[3];
+
+		output[0] = terminal_utils.center_text(product.name, collumn_sizes[0]);
+		output[1] = terminal_utils.center_text(std::to_string(product.price), collumn_sizes[0]);
+		output[2] = terminal_utils.center_text(std::to_string(product.quantity), collumn_sizes[0]);
+
+		std::cout << "|" << output[0] << "|" << output[1] << "|" << output[2] << "|\n";
+	}
+
+	void print_empty() {
+		std::cout << "|" 
+			<< terminal_utils.center_text("empty", collumn_sizes[0]) << "|"
+			<< terminal_utils.center_text("empty", collumn_sizes[1]) << "|"
+			<< terminal_utils.center_text("empty", collumn_sizes[2]) << "|\n"
+		;
+	}
 };
 
 int main() {
 	InventoryManagement inventory_management;
+	
 }
