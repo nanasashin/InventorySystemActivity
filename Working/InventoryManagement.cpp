@@ -394,10 +394,6 @@ int main() {
 		terminal_utils.center_text("DISPLAY PRODUCTS", line.length()),
 	};
 
-	for (int i = 0; i < INVENTORY_MAX_SIZE; i++) {
-		inventory_management.add_product(Product{"sample", 10, 1});
-	}
-
 	while (program_running) {
 		terminal_utils.clear_screen();
 
